@@ -1,0 +1,14 @@
+[project]
+name = "chat-bot"
+description = "generic chat-bot"
+version = "0.1.0"
+
+requires-python = ">=3.12"
+dependencies = [
+    "langgraph", 
+    "langchain",
+    "langchain-community", 
+    "langchainhub", 
+    "langchain-core",
+    "langchain-ollama"
+]
