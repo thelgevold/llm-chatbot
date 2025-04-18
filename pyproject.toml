@@ -10,5 +10,6 @@ dependencies = [
     "langchain-community", 
     "langchainhub", 
     "langchain-core",
-    "langchain-ollama"
+    "langchain-ollama",
+    "httpx"
 ]

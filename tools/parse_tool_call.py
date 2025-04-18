@@ -10,7 +10,7 @@ def parse_tool_call(res):
     tool_call = {}
 
     tool_call["tool_name"] = data.get("name")
-    categories = data.get("arguments", {}).get("res_categories")
-    tool_call["tool_argument"] = {"res_categories": categories}
+    categories = data.get("arguments", {}).get("current_agent")
+    tool_call["tool_argument"] = {"current_agent": categories}
 
     return tool_call
