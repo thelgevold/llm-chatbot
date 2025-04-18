@@ -1,0 +1,4 @@
+[submodule "A2A"]
+	path = A2A
+	url = https://github.com/thelgevold/A2A.git
+    branch = poc
