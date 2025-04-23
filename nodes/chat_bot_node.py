@@ -7,8 +7,6 @@ def ChatBotNode(state: State):
 
     query = state["query"]
 
-    
-
     tool = root_agent.select_agent(query)
 
     return {"tool_call": tool}
