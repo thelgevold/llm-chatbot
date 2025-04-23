@@ -3,6 +3,10 @@ from tools.parse_tool_call import parse_tool_call
 
 from agent.agent_context import AgentContext
 
+from tools.select_agent import select_current_agent
+
+tools = [select_current_agent]
+tools_names = {t.name: t for t in tools}
 
 class RootAgent:
     def __init__(self):
@@ -28,5 +32,7 @@ class RootAgent:
         tool_details = parse_tool_call(tool_call)
         tool_details["user_query"] = request
 
-        return tool_details
+        client = tools_names[tool_details["tool_name"]].invoke(tool_details["tool_argument"]) 
+
+        return client
       
