@@ -5,3 +5,4 @@ class State(TypedDict):
     query: str
     client: any
     result: any
+    payload: any
