@@ -1,5 +1,5 @@
 from llm.model import init_llm_with_tool_calling
-from tools import parse_tool_call
+from tools.parse_tool_call import parse_tool_call
 
 from agent.agent_service import AgentService
 
@@ -20,10 +20,10 @@ class RootAgent:
 
         """
 
-        print("starting call")
-
         result = self.model.invoke(prompt)
-        print(result)
-        print("ended call")
+      
+        tool_call= {}
+        tool_call["tool_call_raw"] = result.content
 
-        tool_details = parse_tool_call(result)
+        tool_details = parse_tool_call(tool_call)
+        print(tool_details)
