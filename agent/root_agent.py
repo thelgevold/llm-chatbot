@@ -7,8 +7,7 @@ from agent.agent_context import AgentContext
 class RootAgent:
     def __init__(self):
         self.model = init_llm_with_tool_calling()
-        
-
+   
     def select_agent(self, request: str):
         agent_context = AgentContext()
         
@@ -27,4 +26,7 @@ class RootAgent:
         tool_call["tool_call_raw"] = result.content
 
         tool_details = parse_tool_call(tool_call)
-        print(tool_details)
+        tool_details["user_query"] = request
+
+        return tool_details
+      
