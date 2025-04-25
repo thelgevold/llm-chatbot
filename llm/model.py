@@ -5,7 +5,7 @@ from tools.select_agent import select_current_agent
 model_llm_tools = None
 model_llm = None
 
-host = "localhost"#"192.168.4.23" 
+host = "localhost"
 
 def init_llm_with_tool_calling(): 
     global model_llm_tools
@@ -15,6 +15,14 @@ def init_llm_with_tool_calling():
         model_llm_tools = model_llm_tools.bind_tools([select_current_agent])
 
     return model_llm_tools
+
+def init_llm(): 
+    global model_llm
+
+    if model_llm == None:
+        model_llm = ChatOllama(model="llama3.2", base_url = f"http://{host}:11438", num_ctx=3000)
+       
+    return model_llm
 
 
 

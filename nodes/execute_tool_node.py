@@ -12,5 +12,3 @@ def ExecuteToolNode(state: State):
     a2a_client = tools_names[tool["tool_name"]].invoke(tool["tool_argument"])
 
     return {"client": a2a_client}
-
-    #return {"messages": [ToolMessage(artifact=res, content="Completed calling tools to categorize articles", tool_call_id="123")], "structured_response": structured_response}

@@ -1,5 +1,4 @@
 from A2A.samples.python.common.client.card_resolver import A2ACardResolver
-from A2A.samples.python.common.types import AgentCard
 from A2A.samples.python.common.client.client import A2AClient
 
 urls = [

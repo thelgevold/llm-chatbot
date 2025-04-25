@@ -1,11 +1,9 @@
 import asyncio
 from uuid import uuid4
 from agent.root_agent import RootAgent
-from A2A.samples.python.common.client.client import A2AClient
-from A2A.samples.python.common.types import TaskState, Task
-from A2A.samples.python.hosts.cli.push_notification_listener import PushNotificationListener
-from A2A.samples.python.common.utils.push_notification_auth import PushNotificationReceiverAuth
+from A2A.samples.python.common.types import TaskState
 import json
+from A2A.samples.python.common.types import SendTaskResponse
 
 async def completeTask(client, prompt, taskId, sessionId, resume):
   
@@ -26,25 +24,29 @@ async def completeTask(client, prompt, taskId, sessionId, resume):
     }
 
     taskResult = await client.send_task(payload)
-    result = json.loads(taskResult.model_dump_json(exclude_none=True))
+
+    if isinstance(taskResult, SendTaskResponse):
+        result = json.loads(taskResult.model_dump_json(exclude_none=True))
+
+        state = TaskState(taskResult.result.status.state)
         
-    if result["result"]["status"]["state"] == "input-required":
-        for p in result["result"]["status"]["message"]["parts"]:
-            print(p["text"])
+        if state.name == TaskState.INPUT_REQUIRED.name:
+            if result["result"]["status"]["state"] == "input-required":
+                for p in result["result"]["status"]["message"]["parts"]:
+                    print(p["text"])
+
+            prompt = input("User: ")
+            return await completeTask(client=client, prompt=prompt, taskId=taskId, sessionId=sessionId, resume=True)
+
+    else:
+        result = taskResult
 
     if result["result"]["status"]["state"] == "completed":
         for a in result["result"]["artifacts"]:
             for p in a["parts"]:
                 print(p["text"])
   
-    state = TaskState(taskResult.result.status.state)
-    if state.name == TaskState.INPUT_REQUIRED.name:
-        prompt = input("User: ")
-        return await completeTask(client=client, prompt=prompt, taskId=taskId, sessionId=sessionId, resume=True)
-        
-    else:
-        ## task is complete
-        return True
+    return True
 
 
 async def chat_loop():
@@ -61,7 +63,7 @@ async def chat_loop():
             if prompt == ":q" or prompt == "quit":
                 return False
             
-            client, host, port = root_agent.select_agent(prompt) 
+            client = root_agent.select_agent(prompt) 
 
             continue_loop = await completeTask(client=client, prompt=prompt, resume=False, taskId=task_id, sessionId=session_id)
 
