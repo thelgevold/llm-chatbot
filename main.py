@@ -5,6 +5,8 @@ from A2A.samples.python.common.client.client import A2AClient
 from A2A.samples.python.common.types import TaskState, Task
 from A2A.samples.python.hosts.cli.push_notification_listener import PushNotificationListener
 from A2A.samples.python.common.utils.push_notification_auth import PushNotificationReceiverAuth
+import json
+
 async def completeTask(client, prompt, taskId, sessionId, resume):
   
     payload = {
@@ -23,17 +25,18 @@ async def completeTask(client, prompt, taskId, sessionId, resume):
         "resume": resume
     }
 
-    taskResult = None
-    # if streaming:
-    #     response_stream = client.send_task_streaming(payload)
-    #     async for result in response_stream:
-    #         print(f"stream event => {result.model_dump_json(exclude_none=True)}")
-    #     taskResult = await client.get_task({"id": taskId})
-    # else:
     taskResult = await client.send_task(payload)
-    print(f"\n{taskResult.model_dump_json(exclude_none=True)}")
+    result = json.loads(taskResult.model_dump_json(exclude_none=True))
+        
+    if result["result"]["status"]["state"] == "input-required":
+        for p in result["result"]["status"]["message"]["parts"]:
+            print(p["text"])
 
-    ## if the result is that more input is required, loop again.
+    if result["result"]["status"]["state"] == "completed":
+        for a in result["result"]["artifacts"]:
+            for p in a["parts"]:
+                print(p["text"])
+  
     state = TaskState(taskResult.result.status.state)
     if state.name == TaskState.INPUT_REQUIRED.name:
         prompt = input("User: ")
@@ -60,21 +63,7 @@ async def chat_loop():
             
             client, host, port = root_agent.select_agent(prompt) 
 
-            # # if use_push_notifications:
-            
-            # notification_receiver_auth = PushNotificationReceiverAuth()
-            # await notification_receiver_auth.load_jwks(f"http://{host}:{port}/.well-known/jwks.json")
-
-            # push_notification_listener = PushNotificationListener(
-            #     host = host,
-            #     port = port,
-            #     notification_receiver_auth=notification_receiver_auth,
-            # )
-            # push_notification_listener.start()  
-
             continue_loop = await completeTask(client=client, prompt=prompt, resume=False, taskId=task_id, sessionId=session_id)
-
-            
 
         except Exception as e:
             print(f"Error: {e}")

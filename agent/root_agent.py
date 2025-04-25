@@ -38,7 +38,5 @@ class RootAgent:
 
         url_parts = urlparse(url)
 
-        print(f"Found this url {url}")
-
         return client, url_parts.hostname, url_parts.port 
       
