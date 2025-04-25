@@ -46,17 +46,20 @@ class RootAgent:
 
         result = self.model.invoke(prompt)
 
-        print(f"Picking Agent: {result}")
-      
         tool_call= {}
         tool_call["tool_call_raw"] = result.content
 
         tool_details = parse_tool_call(tool_call)
         tool_details["user_query"] = request
 
-        if tool_details["tool_argument"]["current_agent"] == "root_agent":
+        agent_name = tool_details["tool_argument"]["current_agent"]
+
+        if agent_name == "root_agent":
             client = RootClient()
         else:
+            print("*********************************************************************************************************************")
+            print(f"I have determined that this can best be answered by external agent {agent_name}. Hang on while I reach out over A2A")
+            print("*********************************************************************************************************************")
             client = tools_names[tool_details["tool_name"]].invoke(tool_details["tool_argument"]) 
 
         return client
