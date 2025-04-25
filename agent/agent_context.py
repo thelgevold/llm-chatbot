@@ -26,6 +26,7 @@ class AgentContext:
                 resolver = A2ACardResolver(url)
                 card = resolver.get_agent_card()
                 self.clients[card.name] = A2AClient(card)
-                self.agent_summary.append({"name": card.name, "description": card.description})
+
+                self.agent_summary.append({"name": card.name, "description": card.description, "url": card.url})
 
             AgentContext._initialized = True    

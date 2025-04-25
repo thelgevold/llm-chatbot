@@ -1,6 +1,6 @@
 from llm.model import init_llm_with_tool_calling
 from tools.parse_tool_call import parse_tool_call
-
+from urllib.parse import urlparse
 from agent.agent_context import AgentContext
 
 from tools.select_agent import select_current_agent
@@ -34,5 +34,11 @@ class RootAgent:
 
         client = tools_names[tool_details["tool_name"]].invoke(tool_details["tool_argument"]) 
 
-        return client
+        url = next(agent["url"] for agent in agent_context.agent_summary if agent["name"] == tool_details["tool_argument"]["current_agent"])
+
+        url_parts = urlparse(url)
+
+        print(f"Found this url {url}")
+
+        return client, url_parts.hostname, url_parts.port 
       
