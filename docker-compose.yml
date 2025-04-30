@@ -1,7 +1,7 @@
 services:
 
   llm_ollama-chat:
-    image: ollama/ollama:0.4.0
+    image: ollama/ollama:0.6.6
     ports:
       - 11438:11434
     volumes:
@@ -23,7 +23,7 @@ services:
       - OLLAMA_HOST=0.0.0.0
 
   llm_ollama-chat-tools:
-    image: ollama/ollama:0.4.0
+    image: ollama/ollama:0.6.6
     ports:
       - 11439:11434
     volumes:

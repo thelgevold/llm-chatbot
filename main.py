@@ -33,7 +33,7 @@ async def completeTask(client, prompt, taskId, sessionId, resume):
         if state.name == TaskState.INPUT_REQUIRED.name:
             if result["result"]["status"]["state"] == "input-required":
                 for p in result["result"]["status"]["message"]["parts"]:
-                    print(f"{p["text"]}\n")
+                    print(f"System: {p["text"]}")
 
             prompt = input("User: ")
             return await completeTask(client=client, prompt=prompt, taskId=taskId, sessionId=sessionId, resume=True)
@@ -44,7 +44,7 @@ async def completeTask(client, prompt, taskId, sessionId, resume):
     if result["result"]["status"]["state"] == "completed":
         for a in result["result"]["artifacts"]:
             for p in a["parts"]:
-                print(f"{p["text"]}\n")
+                print(f"System: {p["text"]}")
   
     return True
 

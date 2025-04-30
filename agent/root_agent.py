@@ -40,27 +40,20 @@ class RootAgent:
 
         Make sure to use the tool called select_current_agent to select a single agent, based on the agent descriptions, that will best serve the request.
 
-        Here are the agents to chose from {agent_context.agent_summary}. If you are unable to pick an appropriate agent based on the agent descriptions, please respond select the option "root_agent".
+        Here are the descriptions of the agents to chose from {agent_context.agent_summary}. If you are unable to pick an appropriate agent based on the agent descriptions, please respond select the option "root_agent".
 
         """
-
         result = self.model.invoke(prompt)
 
-        tool_call= {}
-        tool_call["tool_call_raw"] = result.content
+        tool_call = result.tool_calls[0]
 
-        tool_details = parse_tool_call(tool_call)
-        tool_details["user_query"] = request
-
-        agent_name = tool_details["tool_argument"]["current_agent"]
+        agent_name = tool_call["args"]["current_agent"]
 
         if agent_name == "root_agent":
             client = RootClient()
         else:
-            print("*********************************************************************************************************************")
-            print(f"I have determined that this can best be answered by external agent {agent_name}. Hang on while I reach out over A2A")
-            print("*********************************************************************************************************************")
-            client = tools_names[tool_details["tool_name"]].invoke(tool_details["tool_argument"]) 
+            print(f"System: I have determined that this can best be answered by external agent called {agent_name}. Hang on while I reach out over A2A")
+            client = tools_names[tool_call["name"]].invoke(tool_call["args"]) 
 
         return client
       
